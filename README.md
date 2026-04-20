@@ -26,10 +26,10 @@ Knidos Testnet BOT is an automated tool designed to farming points in Knidos Tes
 
 > **Important:** Sign-Up with new evm wallet and connect your social account.
 
-> **Codes:**
-> KND-9CECE439
-> KND-067E4CCD
-> KND-6A5503F0
+> **Invite Codes:**
+> - KND-9CECE439
+> - KND-067E4CCD
+> - KND-6A5503F0
 
 ## ✨ Features
 
