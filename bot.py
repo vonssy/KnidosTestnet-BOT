@@ -490,7 +490,7 @@ class Knidos:
                             message = result.get("message")
 
                             self.log(
-                                f"{Fore.BLUE+Style.BRIGHT}   {Style.RESET_ALL}"
+                                f"{Fore.BLUE+Style.BRIGHT} ● {Style.RESET_ALL}"
                                 f"{Fore.WHITE+Style.BRIGHT}{title}{Style.RESET_ALL}"
                                 f"{Fore.RED+Style.BRIGHT} Not Completed {Style.RESET_ALL}"
                                 f"{Fore.MAGENTA+Style.BRIGHT}-{Style.RESET_ALL}"
@@ -505,7 +505,7 @@ class Knidos:
                     await asyncio.sleep(5)
                     continue
                 self.log(
-                    f"{Fore.BLUE+Style.BRIGHT}   {Style.RESET_ALL}"
+                    f"{Fore.BLUE+Style.BRIGHT} ● {Style.RESET_ALL}"
                     f"{Fore.WHITE+Style.BRIGHT}{title}{Style.RESET_ALL}"
                     f"{Fore.RED+Style.BRIGHT} Not Completed {Style.RESET_ALL}"
                     f"{Fore.MAGENTA+Style.BRIGHT}-{Style.RESET_ALL}"
@@ -608,7 +608,7 @@ class Knidos:
 
         if not completed:
             self.log(
-                f"{Fore.BLUE+Style.BRIGHT}   {Style.RESET_ALL}"
+                f"{Fore.BLUE+Style.BRIGHT} ● {Style.RESET_ALL}"
                 f"{Fore.WHITE+Style.BRIGHT}{name}{Style.RESET_ALL}"
             )
 
@@ -644,7 +644,7 @@ class Knidos:
 
         else:
             self.log(
-                f"{Fore.BLUE+Style.BRIGHT}   {Style.RESET_ALL}"
+                f"{Fore.BLUE+Style.BRIGHT} ● {Style.RESET_ALL}"
                 f"{Fore.WHITE+Style.BRIGHT}{name}{Style.RESET_ALL}"
                 f"{Fore.YELLOW+Style.BRIGHT} Already Completed {Style.RESET_ALL}"
             )
@@ -659,7 +659,7 @@ class Knidos:
 
         #     if status in ["completed", "pending"]:
         #         self.log(
-        #             f"{Fore.BLUE+Style.BRIGHT}   {Style.RESET_ALL}"
+        #             f"{Fore.BLUE+Style.BRIGHT} ● {Style.RESET_ALL}"
         #             f"{Fore.WHITE+Style.BRIGHT}{title}{Style.RESET_ALL}"
         #             f"{Fore.YELLOW+Style.BRIGHT} {status.capitalize()} {Style.RESET_ALL}"
         #         )
@@ -669,7 +669,7 @@ class Knidos:
         #     if not complete: continue
 
         #     self.log(
-        #         f"{Fore.BLUE+Style.BRIGHT}   {Style.RESET_ALL}"
+        #         f"{Fore.BLUE+Style.BRIGHT} ● {Style.RESET_ALL}"
         #         f"{Fore.WHITE+Style.BRIGHT}{title}{Style.RESET_ALL}"
         #         f"{Fore.GREEN+Style.BRIGHT} Completed {Style.RESET_ALL}"
         #         f"{Fore.MAGENTA+Style.BRIGHT}-{Style.RESET_ALL}"
