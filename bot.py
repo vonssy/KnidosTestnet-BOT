@@ -148,16 +148,22 @@ class Knidos:
 
         return proxy_url
     
-    def extract_cookies(self, address, response, jar=SimpleCookie()):
-        if self.accounts[address].get("cookie"):
-            jar.load(self.accounts[address]["cookie"])
-
+    def extract_cookies(self, address, response):
+        existing = self.accounts[address].get("cookies", {})
+        
+        jar = SimpleCookie()
+        
+        for k, v in existing.items():
+            jar[k] = v
+        
         for h in response.headers.getall("Set-Cookie", []):
             jar.load(h)
+        
+        self.accounts[address]["cookies"] = {
+            k: m.value for k, m in jar.items()
+        }
 
-        self.accounts[address]["cookie"] = "; ".join(f"{k}={m.value}" for k, m in jar.items())
-
-        return self.accounts[address]["cookie"]
+        return self.accounts[address]["cookies"]
     
     def initialize_headers(self, address: str):
         headers = {
@@ -252,7 +258,8 @@ class Knidos:
         connector, proxy, proxy_auth = self.build_proxy_config(proxy_url)
         try:
             async with ClientSession(connector=connector, timeout=ClientTimeout(total=30)) as session:
-                async with session.get(url=url, proxy=proxy, proxy_auth=proxy_auth) as response:
+                async with session.get(
+                    url, proxy=proxy, proxy_auth=proxy_auth) as response:
                     await self.ensure_ok(response)
                     return True
         except (Exception, ClientResponseError) as e:
@@ -277,9 +284,13 @@ class Knidos:
                     "wallet": address,
                     "challenge_type": "wallet_login"
                 }
+                cookies = self.accounts[address].get("cookies", {})
 
                 async with ClientSession(connector=connector, timeout=ClientTimeout(total=60)) as session:
-                    async with session.post(url=url, headers=headers, json=payload, proxy=proxy, proxy_auth=proxy_auth) as response:
+                    async with session.post(
+                        
+                        url, headers=headers, json=payload, cookies=cookies, proxy=proxy, proxy_auth=proxy_auth
+                    ) as response:
                         await self.ensure_ok(response)
                         self.extract_cookies(address, response)
                         return await response.json()
@@ -303,12 +314,14 @@ class Knidos:
             connector, proxy, proxy_auth = self.build_proxy_config(proxy_url)
             try:
                 headers = self.initialize_headers(address)
-                headers["Cookie"] = self.accounts[address]["cookie"]
                 headers["Content-Type"] = "application/json"
                 payload = self.generate_payload(private_key, address, message)
+                cookies = self.accounts[address].get("cookies", {})
 
                 async with ClientSession(connector=connector, timeout=ClientTimeout(total=60)) as session:
-                    async with session.post(url=url, headers=headers, json=payload, proxy=proxy, proxy_auth=proxy_auth) as response:
+                    async with session.post(
+                        url, headers=headers, json=payload, cookies=cookies, proxy=proxy, proxy_auth=proxy_auth
+                    ) as response:
                         await self.ensure_ok(response)
                         self.extract_cookies(address, response)
                         return await response.json()
@@ -332,10 +345,12 @@ class Knidos:
             connector, proxy, proxy_auth = self.build_proxy_config(proxy_url)
             try:
                 headers = self.initialize_headers(address)
-                headers["Cookie"] = self.accounts[address]["cookie"]
+                cookies = self.accounts[address].get("cookies", {})
 
                 async with ClientSession(connector=connector, timeout=ClientTimeout(total=60)) as session:
-                    async with session.get(url=url, headers=headers, proxy=proxy, proxy_auth=proxy_auth) as response:
+                    async with session.get(
+                        url, headers=headers, cookies=cookies, proxy=proxy, proxy_auth=proxy_auth
+                    ) as response:
                         await self.ensure_ok(response)
                         return await response.json()
             except (Exception, ClientResponseError) as e:
@@ -358,10 +373,12 @@ class Knidos:
             connector, proxy, proxy_auth = self.build_proxy_config(proxy_url)
             try:
                 headers = self.initialize_headers(address)
-                headers["Cookie"] = self.accounts[address]["cookie"]
+                cookies = self.accounts[address].get("cookies", {})
 
                 async with ClientSession(connector=connector, timeout=ClientTimeout(total=60)) as session:
-                    async with session.post(url=url, headers=headers, proxy=proxy, proxy_auth=proxy_auth) as response:
+                    async with session.post(
+                        url, headers=headers, cookies=cookies, proxy=proxy, proxy_auth=proxy_auth
+                    ) as response:
                         await self.ensure_ok(response)
                         return await response.json()
             except (Exception, ClientResponseError) as e:
@@ -384,14 +401,16 @@ class Knidos:
             connector, proxy, proxy_auth = self.build_proxy_config(proxy_url)
             try:
                 headers = self.initialize_headers(address)
-                headers["Cookie"] = self.accounts[address]["cookie"]
                 headers["Content-Type"] = "application/json"
                 payload = {
                     "game_key": game_key
                 }
+                cookies = self.accounts[address].get("cookies", {})
 
                 async with ClientSession(connector=connector, timeout=ClientTimeout(total=60)) as session:
-                    async with session.post(url=url, headers=headers, json=payload, proxy=proxy, proxy_auth=proxy_auth) as response:
+                    async with session.post(
+                        url, headers=headers, json=payload, cookies=cookies, proxy=proxy, proxy_auth=proxy_auth
+                    ) as response:
                         await self.ensure_ok(response)
                         return await response.json()
             except (Exception, ClientResponseError) as e:
@@ -414,15 +433,17 @@ class Knidos:
             connector, proxy, proxy_auth = self.build_proxy_config(proxy_url)
             try:
                 headers = self.initialize_headers(address)
-                headers["Cookie"] = self.accounts[address]["cookie"]
                 headers["Content-Type"] = "application/json"
                 payload = {
                     "game_key": game_key,
                     "session_token": session_token
                 }
+                cookies = self.accounts[address].get("cookies", {})
 
                 async with ClientSession(connector=connector, timeout=ClientTimeout(total=60)) as session:
-                    async with session.post(url=url, headers=headers, json=payload, proxy=proxy, proxy_auth=proxy_auth) as response:
+                    async with session.post(
+                        url, headers=headers, json=payload, cookies=cookies, proxy=proxy, proxy_auth=proxy_auth
+                    ) as response:
                         await self.ensure_ok(response)
                         return await response.json()
             except (Exception, ClientResponseError) as e:
@@ -445,15 +466,17 @@ class Knidos:
             connector, proxy, proxy_auth = self.build_proxy_config(proxy_url)
             try:
                 headers = self.initialize_headers(address)
-                headers["Cookie"] = self.accounts[address]["cookie"]
                 headers["Content-Type"] = "application/json"
                 payload = {
                     "game_key": game_key,
                     "session_token": session_token
                 }
+                cookies = self.accounts[address].get("cookies", {})
 
                 async with ClientSession(connector=connector, timeout=ClientTimeout(total=60)) as session:
-                    async with session.post(url=url, headers=headers, json=payload, proxy=proxy, proxy_auth=proxy_auth) as response:
+                    async with session.post(
+                        url, headers=headers, json=payload, cookies=cookies, proxy=proxy, proxy_auth=proxy_auth
+                    ) as response:
                         await self.ensure_ok(response)
                         return await response.json()
             except (Exception, ClientResponseError) as e:
@@ -476,14 +499,16 @@ class Knidos:
             connector, proxy, proxy_auth = self.build_proxy_config(proxy_url)
             try:
                 headers = self.initialize_headers(address)
-                headers["Cookie"] = self.accounts[address]["cookie"]
                 headers["Content-Type"] = "application/json"
                 payload = {
                     "taskKey": task_key
                 }
+                cookies = self.accounts[address].get("cookies", {})
 
                 async with ClientSession(connector=connector, timeout=ClientTimeout(total=60)) as session:
-                    async with session.post(url=url, headers=headers, json=payload, proxy=proxy, proxy_auth=proxy_auth) as response:
+                    async with session.post(
+                        url, headers=headers, json=payload, cookies=cookies, proxy=proxy, proxy_auth=proxy_auth
+                    ) as response:
                         
                         result = await response.json()
                         if not result.get("ok"):
@@ -754,4 +779,4 @@ if __name__ == "__main__":
             f"{Fore.WHITE + Style.BRIGHT} | {Style.RESET_ALL}"
             f"{Fore.RED + Style.BRIGHT}[ EXIT ] Knidos Testnet - BOT{Style.RESET_ALL}                                       "                              
         )
-        sys.exit(0)
+        sys.exit(1)
